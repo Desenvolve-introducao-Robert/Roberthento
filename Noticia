@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <title>Notícia do Dia</title>
+</head>
+<body>
+    <h1>Frente fria chega ao Sudeste com queda brusca de temperatura</h1>
+
+    <h2>Temperaturas devem cair até 10°C em algumas regiões; há previsão de chuva e ventos fortes</h2>
+
+    <p><strong>Uma frente fria vinda do sul do país</strong> começou a avançar sobre a região Sudeste nesta segunda-feira (22), trazendo chuvas e ventos que antecedem uma <em>queda significativa de temperatura</em>.</p>
+
+    <p>De acordo com o <mark>Instituto Nacional de Meteorologia (INMET)</mark>, cidades como São Paulo, Belo Horizonte e Rio de Janeiro podem registrar mínimas entre 8°C e 12°C ao longo da semana.</p>
+
+    <p>A Defesa Civil <u>emitiu alertas</u> para possíveis deslizamentos e alagamentos em áreas de risco, especialmente em regiões com histórico de chuva intensa e relevo acidentado.</p>
+
+    <p>Moradores devem redobrar a atenção com o frio intenso e seguir recomendações como o uso de roupas adequadas, evitar exposição prolongada ao ar livre e <i>manter-se hidratado</i>, mesmo em dias frios.</p>
+
+    <hr>
+
+    <p><small>Publicado em 22/07/2025 por Redação Tempo Agora</small></p>
+</body>
+</html>
