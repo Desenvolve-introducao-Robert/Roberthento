@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <title>Meus Filmes Favoritos</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f2f2f2;
+            text-align: center;
+        }
+        h1 {
+            color: #333;
+        }
+        .galeria {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 20px;
+            padding: 20px;
+        }
+        .galeria a img {
+            width: 200px;
+            height: 300px;
+            border-radius: 10px;
+            transition: transform 0.3s;
+        }
+        .galeria a img:hover {
+            transform: scale(1.05);
+        }
+    </style>
+</head>
+<body>
+
+    <h1>🎬 Meus Filmes Favoritos</h1>
+
+    <div class="galeria">
+        <a href="https://pt.wikipedia.org/wiki/Interestelar" target="_blank">
+            <img src="imagens/interestelar.jpg" alt="Interestelar">
+        </a>
+        <a href="https://pt.wikipedia.org/wiki/O_Rei_Leão_(1994)" target="_blank">
+            <img src="imagens/rei-leao.jpg" alt="O Rei Leão">
+        </a>
+        <a href="https://pt.wikipedia.org/wiki/Matrix" target="_blank">
+            <img src="imagens/matrix.jpg" alt="Matrix">
+        </a>
+        <a href="https://pt.wikipedia.org/wiki/Titanic_(1997)" target="_blank">
+            <img src="imagens/titanic.jpg" alt="Titanic">
+        </a>
+        <a href="https://pt.wikipedia.org/wiki/Vingadores:_Ultimato" target="_blank">
+            <img src="imagens/ultimato.jpg" alt="Vingadores: Ultimato">
+        </a>
+        <a href="https://pt.wikipedia.org/wiki/Forrest_Gump" target="_blank">
+            <img src="imagens/forrest-gump.jpg" alt="Forrest Gump">
+        </a>
+    </div>
+
+</body>
+</html>
