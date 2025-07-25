@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <title>Portal de Notícias</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+        }
+        header {
+            background-color: #003366;
+            color: white;
+            padding: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+        header img {
+            height: 50px;
+        }
+        main {
+            padding: 20px;
+        }
+        article {
+            margin-bottom: 40px;
+            border-bottom: 1px solid #ccc;
+            padding-bottom: 20px;
+        }
+        footer {
+            background-color: #003366;
+            color: white;
+            text-align: center;
+            padding: 15px;
+        }
+        footer a {
+            color: white;
+            margin: 0 10px;
+            text-decoration: none;
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <h1>Portal de Notícias</h1>
+        <img src="logo.png" alt="Logo do Portal">
+    </header>
+
+    <main>
+        <article>
+            <h2>Inovação na Energia Solar Cresce no Brasil</h2>
+            <h3>Governo anuncia novos incentivos para tecnologias sustentáveis</h3>
+            <p><strong>Brasília, 25 de julho de 2025</strong> – O setor de energia renovável continua em alta com os novos investimentos do governo federal.</p>
+            <p><em>De acordo com o Ministério de Minas e Energia</em>, mais de R$ 5 bilhões serão investidos até 2026.</p>
+            <p>Especialistas apontam que o Brasil pode se tornar líder mundial em produção solar se continuar neste ritmo.</p>
+            <p><u>A medida também cria milhares de empregos e contribui para o meio ambiente.</u></p>
+        </article>
+
+        <article>
+            <h2>Tecnologia 6G: o futuro da internet está mais próximo</h2>
+            <h3>Pesquisadores realizam testes bem-sucedidos com a nova geração</h3>
+            <p>Uma equipe de cientistas asiáticos anunciou avanços importantes no desenvolvimento da tecnologia 6G.</p>
+            <p>Os testes demonstraram velocidades até 100 vezes maiores que o 5G, além de menor latência.</p>
+            <p>A expectativa é que os primeiros dispositivos compatíveis comecem a aparecer em 2028.</p>
+            <p><strong>A revolução digital está cada vez mais acelerada.</strong></p>
+        </article>
+    </main>
+
+    <footer>
+        <p>Siga-nos nas redes sociais:</p>
+        <a href="#">Facebook</a> |
+        <a href="#">Instagram</a> |
+        <a href="#">Twitter</a> |
+        <a href="#">LinkedIn</a>
+    </footer>
+
+</body>
+</html>
