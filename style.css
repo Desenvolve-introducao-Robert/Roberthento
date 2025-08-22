@@ -1,88 +1,43 @@
-/* ===== Paleta ===== */
-:root {
-  --bg: #E6F1F8;   /* fundo */
-  --text: #0B1F2A; /* texto */
-  --accent: #2E8BC0; /* destaque */
-}
-
-/* ===== Base ===== */
-*,
-*::before,
-*::after { box-sizing: border-box; }
-
-html, body {
-  margin: 0;
-  padding: 0;
-}
-
+/* 1. Aspectos gerais */
 body {
-  background: var(--bg);
-  color: var(--text);
-  font-family: system-ui, -apple-system, "Segoe UI", Roboto, Arial, sans-serif;
-  line-height: 1.6;
-  font-size: 16px;
+  width: 1200px;              /* tamanho fixo para a página */
+  margin: 0 auto;             /* centraliza a página no navegador */
+  font-family: sans-serif;    /* fonte sans-serif */
 }
 
-/* Títulos e links */
+p {
+  text-indent: 1em;           /* indenta parágrafos */
+}
+
+/* 2. Títulos */
 h1, h2, h3 {
-  color: var(--accent);
-  line-height: 1.2;
-  margin: 0 0 .5rem 0;
+  text-align: center;         /* pode trocar para right se preferir */
 }
 
-p { margin: 0 0 1rem 0; }
-
-a {
-  color: var(--accent);
-  text-decoration: none;
-}
-a:hover { text-decoration: underline; }
-
-/* Container geral (ajuste se seu HTML tiver outro wrapper) */
-.container,
-.page-wrapper,
-.wrapper {
-  max-width: 1100px;
-  margin: 0 auto;
-  padding: 1.5rem;
-  background: transparent;
+h1 {
+  font-size: 1.8rem;
 }
 
-/* Cartões/seções comuns */
-section, article, aside {
-  background: #ffffff;
-  padding: 1rem 1.25rem;
-  margin-bottom: 1rem;
-  border-radius: 14px;
-  box-shadow: 0 8px 24px rgba(0,0,0,.06);
+h2 {
+  font-size: 1.4rem;
 }
 
-/* Botões/Chips de destaque */
-.button, .btn, .tag, .cta {
-  display: inline-block;
-  background: var(--accent);
-  color: #fff;
-  padding: .5rem .9rem;
-  border-radius: 999px;
-  font-weight: 600;
-  font-size: 0.95rem;
+h3 {
+  font-size: 1.2rem;
 }
 
-/* Imagens responsivas */
-img { max-width: 100%; height: auto; display: block; }
-
-/* Acessibilidade: foco visível */
-:focus-visible {
-  outline: 3px solid var(--accent);
-  outline-offset: 3px;
+/* 3. Seções de resumo e principal */
+/* Normalmente no Zen Garden elas têm ids: #zen-summary e #zen-preamble (resumo),
+   e #zen-main (principal). */
+#zen-summary, #zen-preamble {
+  text-align: center;         /* alinhamento à direita também é válido */
 }
 
-/* Layout responsivo simples */
-@media (min-width: 900px) {
-  .grid-2 {
-    display: grid;
-    grid-template-columns: 2fr 1fr;
-    gap: 1rem;
-    align-items: start;
-  }
+#zen-main p {
+  line-height: 1.5;           /* espaçamento entre linhas */
+}
+
+/* 4. Abreviaturas */
+abbr {
+  font-variant: small-caps;
 }
