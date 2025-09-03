@@ -1,43 +1,63 @@
-/* 1. Aspectos gerais */
-body {
-  width: 1200px;              /* tamanho fixo para a página */
-  margin: 0 auto;             /* centraliza a página no navegador */
-  font-family: sans-serif;    /* fonte sans-serif */
+.page-wrapper {
+  width: 80%;
+  max-width: 1280px;
+  margin: auto; 
 }
 
-p {
-  text-indent: 1em;           /* indenta parágrafos */
+#zen-intro {
+  height: 550px;
 }
 
-/* 2. Títulos */
-h1, h2, h3 {
-  text-align: center;         /* pode trocar para right se preferir */
+#design-archives {
+  display: none;
 }
 
-h1 {
-  font-size: 1.8rem;
+#zen-intro header {
+  background: #1f295c;
+  color: yellow;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 1em;
 }
 
-h2 {
-  font-size: 1.4rem;
+#zen-intro header h1,
+#zen-intro header h2 {
+  display: inline-block;
+  margin: 0;
 }
 
-h3 {
-  font-size: 1.2rem;
+#zen-intro header h1 {
+  margin-left: 1em;
+  margin-right: 1em;
 }
 
-/* 3. Seções de resumo e principal */
-/* Normalmente no Zen Garden elas têm ids: #zen-summary e #zen-preamble (resumo),
-   e #zen-main (principal). */
-#zen-summary, #zen-preamble {
-  text-align: center;         /* alinhamento à direita também é válido */
+aside ul {
+  list-style: none; 
+  padding: 0;
 }
 
-#zen-main p {
-  line-height: 1.5;           /* espaçamento entre linhas */
+aside ul li + li {
+  margin-top: 1em; 
 }
 
-/* 4. Abreviaturas */
-abbr {
-  font-variant: small-caps;
+aside ul li {
+  text-align: center;
+}
+
+footer {
+  background: #1f295c;
+  color: yellow;
+  margin: 4%;      
+  padding: 1em;
+  text-align: center;
+}
+
+footer a {
+  display: inline-block;
+  border: 2px solid yellow;
+  padding: 0.5em;
+  margin: 0.5em;
+  text-decoration: none;
+  color: yellow;
 }
