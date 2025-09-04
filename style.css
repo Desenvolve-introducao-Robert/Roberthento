@@ -1,24 +1,19 @@
 .page-wrapper {
-  width: 80%;
-  max-width: 1280px;
-  margin: auto; 
+  position: relative;
 }
 
-#zen-intro {
-  height: 550px;
+.explanation {
+  width: 60%;
+  border-right: #1f295c solid 1px;
+  padding-right: 2%;
 }
 
-#design-archives {
-  display: none;
-}
-
-#zen-intro header {
-  background: #1f295c;
-  color: yellow;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 1em;
+#design-selection {
+  position: absolute;
+  top: 560px;
+  left: 62%;
+  padding-left: 1%;
+  padding-right: 1%;
 }
 
 #zen-intro header h1,
@@ -30,6 +25,22 @@
 #zen-intro header h1 {
   margin-left: 1em;
   margin-right: 1em;
+}
+
+
+.explanation {
+  width: 60%;
+  margin-right: 35%;      
+  border-right: 1px solid #1f295c;
+  padding-right: 2%;
+}
+
+
+.design-selection {
+  position: absolute;
+  top: 560px;   
+  left: 62%;   
+  padding: 0 2%;
 }
 
 aside ul {
