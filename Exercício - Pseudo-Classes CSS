@@ -1,0 +1,123 @@
+.page-wrapper {
+  position: relative;
+}
+
+.explanation {
+  width: 60%;
+  border-right: 1px solid #1f295c;
+  padding-right: 2%;
+  margin-right: 35%;      
+}
+
+#design-selection {
+  position: absolute;
+  top: 560px;
+  left: 62%;
+  padding: 0 2%;
+}
+
+#zen-intro header h1,
+#zen-intro header h2 {
+  display: inline-block;
+  margin: 0;
+}
+
+#zen-intro header h1 {
+  margin: 0 1em;
+}
+
+aside ul {
+  list-style: none; 
+  padding: 0;
+}
+
+aside ul li + li {
+  margin-top: 1em; 
+}
+
+aside ul li {
+  text-align: center;
+}
+
+footer {
+  background: #1f295c;
+  color: yellow;
+  margin: 4%;
+  padding: 1em;
+
+  display: flex;
+  justify-content: space-evenly;
+  flex-wrap: wrap;
+}
+
+footer a {
+  border: 2px solid yellow;
+  padding: 0.5em;
+  text-decoration: none;
+  color: yellow;
+  min-width: 120px;
+  text-align: center;
+}
+
+.benefits {
+  display: flex;
+  align-items: center;                
+  border-top: 1px solid #1f295c;
+  border-bottom: 1px solid #1f295c;
+  padding: 1em 0;
+}
+
+.benefits p {
+  flex-basis: 70%;   
+}
+
+.benefits h3 {
+  flex-basis: 30%;
+  text-align: center;
+}
+
+.participation {
+  display: flex;
+  border-bottom: 1px solid #1f295c;
+  padding: 1em 0;
+}
+
+.participation .item {
+  flex: 0 0 50%;      
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+
+a {
+  color: #1f295c;         
+  font-weight: bold;
+  text-decoration: none;
+}
+
+
+a:hover {
+  color: #4a5ca6;         
+}
+
+a:visited {
+  color: #1f295c;         
+  font-weight: normal;   
+}
+
+main p:first-of-type::first-letter {
+  font-size: 3em;         
+  font-family: Georgia, serif;
+  float: left;
+  margin-right: 0.2em;
+}
+
+#design-selection ul li {
+  border-top: 1px solid #1f295c;
+  padding: 0.5em 0;
+}
+
+#design-selection ul li:last-child {
+  border-bottom: 1px solid #1f295c;
+}
