@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Currículo - Robert Henrique Marques Santos</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <!-- Navegação -->
+    <nav>
+        <ul>
+            <li><a href="#apresentacao">Apresentação</a></li>
+            <li><a href="#educacao">Educação</a></li>
+            <li><a href="#certificacoes">Certificações</a></li>
+            <li><a href="#experiencia">Experiência</a></li>
+            <li><a href="#habilidades">Habilidades</a></li>
+            <li><a href="#contato">Contato</a></li>
+        </ul>
+    </nav>
+
+    <!-- Apresentação -->
+    <header id="apresentacao">
+        <h1>Robert Henrique Marques Santos</h1>
+        <img src="foto.jpg" alt="Foto de Robert Henrique" class="foto-perfil">
+        <p><strong>Email:</strong> robertmarques23@hotmail.com | <strong>Telefone:</strong> (31) 9 8265-0008</p>
+        <p><strong>Endereço:</strong> Rua Travessa São Domingos, 52 - Madre Maria de Jesus, Itabira - MG</p>
+        <p>Profissional com experiência em administração, vendas e gestão de restaurante. Atualmente em formação como Técnico em Segurança do Trabalho e Desenvolvimento de Sistemas, com foco em crescimento profissional e aplicação prática do conhecimento adquirido.</p>
+    </header>
+
+    <!-- Educação -->
+    <section id="educacao">
+        <h2>Educação</h2>
+        <div class="registro">
+            <h3>Ensino Médio</h3>
+            <p>Trajano Procopio Silva Monteiro - Conclusão: 2016</p>
+        </div>
+        <div class="registro">
+            <h3>Auxiliar Administrativo</h3>
+            <p>SENAC - Conclusão: 2016</p>
+        </div>
+        <div class="registro">
+            <h3>Técnico em Segurança do Trabalho</h3>
+            <p>Previsão de conclusão: 2025</p>
+        </div>
+        <div class="registro">
+            <h3>Projeto Desenvolvimento de Sistema</h3>
+            <p>Programa Desenvolve - Previsão de conclusão: 2025</p>
+        </div>
+    </section>
+
+    <!-- Certificações -->
+    <section id="certificacoes">
+        <h2>Certificações</h2>
+        <div class="registro">
+            <strong>Auxiliar Administrativo - SENAC</strong> | 2016
+        </div>
+    </section>
+
+    <!-- Experiência -->
+    <section id="experiencia">
+        <h2>Experiência Profissional</h2>
+        <div class="registro">
+            <h3>Vendedor de Comércio</h3>
+            <p>Casas Bahia (Via Varejo) | 2017 - 2021</p>
+        </div>
+        <div class="registro">
+            <h3>Auxiliar Administrativo</h3>
+            <p>Aproita | 2024</p>
+        </div>
+        <div class="registro">
+            <h3>Gerente de Restaurante</h3>
+            <p>Trattoria di Prima | 2025</p>
+        </div>
+    </section>
+
+    <!-- Habilidades -->
+    <section id="habilidades">
+        <h2>Habilidades Técnicas</h2>
+        <ul>
+            <li>Gestão Administrativa</li>
+            <li>Atendimento ao Cliente</li>
+            <li>Gestão de Restaurantes</li>
+            <li>Pacote Office</li>
+            <li>HTML, CSS (em desenvolvimento)</li>
+            <li>Segurança do Trabalho (em formação)</li>
+        </ul>
+    </section>
+
+    <!-- Rodapé -->
+    <footer id="contato">
+        <h2>Contato</h2>
+        <ul>
+            <li><a href="mailto:robertmarques23@hotmail.com">Email</a></li>
+            <li><a href="https://www.linkedin.com/in/robert-henrique-642954258/" target="_blank">LinkedIn</a></li>
+        </ul>
+        <p>&copy; 2025 - Última atualização</p>
+    </footer>
+</body>
+</html>
+
+:root{
+  --cor-principal: #0b4f6c;
+  --cor-secundaria: #f5f7fa;
+  --cor-destaque: #f39c12;
+  --texto: #1b2330;
+  --rodape-bg: #e9eef2;
+  --max-width: 1100px;
+  --gutter: 1.5rem;
+}
+
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%}
+body{
+  font-family: 'Inter', system-ui;
+  color:var(--texto);
+  background:var(--cor-secundaria);
+  line-height:1.45;
+  padding-top:70px;
+}
+
+.container{max-width:var(--max-width);margin:0 auto;padding:var(--gutter)}
+
+nav{position:fixed;top:0;left:0;right:0;height:70px;background:var(--cor-principal);color:white;z-index:1000;display:flex;align-items:center;box-shadow:0 4px 10px rgba(11,79,108,.12)}
+nav .container{display:flex;align-items:center;justify-content:space-between;padding-left:1rem;padding-right:1rem}
+nav .brand{font-family:'Montserrat',sans-serif;font-weight:700}
+nav ul{list-style:none;display:flex;gap:1rem}
+nav a{color:white;text-decoration:none;padding:.5rem .75rem;border-radius:6px;font-weight:600}
+nav a:hover,nav a:focus{background:rgba(255,255,255,.08)}
+
+@media (max-width:720px){
+  nav ul{flex-direction:column;position:fixed;top:70px;right:0;background:var(--cor-principal);padding:1rem;display:none;border-radius:6px;margin-right:1rem}
+  nav ul.show{display:flex}
+  .menu-toggle{display:block;cursor:pointer}
+}
+.menu-toggle{display:none}
+
+header.cv-header{background:white;border-radius:12px;padding:1.25rem;margin-bottom:1rem;display:flex;gap:1rem;align-items:flex-start;flex-direction:column}
+header .nome{font-family:'Montserrat',sans-serif;font-size:2rem;color:var(--cor-principal);font-weight:800}
+header .foto-e-intro{display:flex;gap:1rem;align-items:flex-start;flex-direction:column}
+header .foto{width:120px;height:120px;border-radius:10px;overflow:hidden;border:3px solid var(--cor-destaque)}
+header .foto img{width:100%;height:100%;object-fit:cover;display:block}
+header p.apresentacao{margin-top:.5rem}
+.contatos{margin-top:1rem;font-size:.95rem}
+.contatos a{margin-right:.75rem;color:var(--cor-principal);text-decoration:none}
+
+section.card{background:white;border-radius:12px;padding:1rem;margin-bottom:1rem}
+section.card h2{font-family:'Montserrat',sans-serif;color:var(--cor-principal);margin-bottom:.75rem}
+
+.registros{display:flex;flex-direction:column;gap:.75rem}
+.registro{padding:.75rem;border-left:4px solid var(--cor-destaque);background:linear-gradient(0deg, rgba(243,156,18,0.04), transparent);border-radius:8px}
+.registro h3{margin-bottom:.25rem;font-size:1rem}
+.registro .meta{font-size:.9rem;opacity:.85}
+.registro p{margin-top:.5rem}
+
+ul.habilidades{list-style:disc;margin-left:1.25rem}
+
+footer{background:var(--rodape-bg);padding:1rem;border-radius:8px;margin-top:1rem}
+footer ul{list-style:none;display:flex;gap:.75rem;flex-wrap:wrap}
+footer a{color:var(--cor-principal);text-decoration:none}
+footer .copyright{margin-top:.5rem;font-size:.9rem;color:#5b6b73}
+
+@media(min-width:900px){
+  .header-grid{display:grid;grid-template-columns:1fr 320px;gap:1.25rem;align-items:start}
+  header.cv-header{flex-direction:initial}
+  header .foto-e-intro{flex-direction:column}
+}
+
+@media print{
+  nav{display:none}
+  body{padding-top:0}
+  .container{padding:0}
+  section.card{box-shadow:none}
+}
