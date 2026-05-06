@@ -1,0 +1,79 @@
+✅ Q1 — Intervalo crescente (recursivo)
+def intervalo(a, b):
+    if a > b:
+        print("Valores invalidos")
+        return
+    
+    print(a, end=" ")
+    
+    if a == b:
+        return
+    
+    intervalo(a + 1, b)
+✔ Exemplo:
+intervalo(1, 10)                                                                                                                                                              
+✅ Q2 — Intervalo invertido (mudando só 1 linha)
+
+A única mudança é onde você imprime:
+
+def intervalo_invertido(a, b):
+    if a > b:
+        print("Valores invalidos")
+        return
+    
+    if a == b:
+        print(a, end=" ")
+        return
+    
+    intervalo_invertido(a + 1, b)
+    print(a, end=" ")  # 👈 mudou só essa linha de posição
+✅ Q3 — Soma de 1 até n (recursivo)
+def soma(n):
+    if n == 1:
+        return 1
+    return n + soma(n - 1)
+✔ Exemplo:
+print(soma(5))  # 15
+✅ Q4 — Número primo (recursivo)
+
+Aqui usamos uma função auxiliar:
+
+def eh_primo(n, divisor=2):
+    if n <= 1:
+        return False
+    
+    if divisor * divisor > n:
+        return True
+    
+    if n % divisor == 0:
+        return False
+    
+    return eh_primo(n, divisor + 1)
+✔ Exemplo:
+print(eh_primo(7))  # True
+print(eh_primo(10)) # False
+✅ Q5 — Decimal → Binário (recursivo)
+def decimal_para_binario(n):
+    if n == 0:
+        return "0"
+    
+    if n == 1:
+        return "1"
+    
+    return decimal_para_binario(n // 2) + str(n % 2)
+✔ Exemplo:
+print(decimal_para_binario(13))  # 1101
+⭐ EXTRA — Pré-ordem (árvore binária)
+RAIZ_IDX, ESQ_IDX, DIR_IDX = 0, 1, 2
+
+def pre_ordem(arvore):
+    if arvore is None:
+        return
+    
+    print(arvore[RAIZ_IDX], end=" ")
+    pre_ordem(arvore[ESQ_IDX])
+    pre_ordem(arvore[DIR_IDX])
+✔ Teste:
+pre_ordem(arvore)
+✔ Saída esperada:
+4 2 1 3 5
