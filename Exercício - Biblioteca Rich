@@ -1,0 +1,334 @@
+1. Criação do Ambiente Virtual
+Bash# No terminal
+python -m venv venv
+source venv/bin/activate     # Linux/Mac
+# venv\Scripts\activate      # Windows
+
+pip install rich
+pip install pydoc  # normalmente já vem com o Pythontemp.sh: line 3: venv/bin/activate: No such file or directory
+WARNING: Running pip as the 'root' user can result in broken permissions and conflicting behaviour with the system package manager. It is recommended to use a virtual environment instead: https://pip.pypa.io/warnings/venv
+WARNING: Retrying (Retry(total=4, connect=None, read=None, redirect=None, status=None)) after connection broken by 'NewConnectionError('<pip._vendor.urllib3.connection.HTTPSConnection object at 0x7f1edf02a1e0>: Failed to establish a new connection: [Errno 111] Connection refused')': /simple/pydoc/
+WARNING: Retrying (Retry(total=3, connect=None, read=None, redirect=None, status=None)) after connection broken by 'NewConnectionError('<pip._vendor.urllib3.connection.HTTPSConnection object at 0x7f1ee02a4d40>: Failed to establish a new connection: [Errno 111] Connection refused')': /simple/pydoc/
+The virtual environment was not created successfully because ensurepip is not
+available.  On Debian/Ubuntu systems, you need to install the python3-venv
+package using the following command.
+
+    apt install python3.12-venv
+
+You may need to use sudo with that command.  After installing the python3-venv
+package, recreate your virtual environment.
+
+Failing command: /home/workdir/venv/bin/python
+
+Requirement already satisfied: rich in /usr/local/lib/python3.12/dist-packages (15.0.0)
+Requirement already satisfied: markdown-it-py>=2.2.0 in /usr/local/lib/python3.12/dist-packages (from rich) (4.0.0)
+Requirement already satisfied: pygments<3.0.0,>=2.13.0 in /usr/lib/python3/dist-packages (from rich) (2.17.2)
+Requirement already satisfied: mdurl~=0.1 in /usr/local/lib/python3.12/dist-packages (from markdown-it-py>=2.2.0->rich) (0.1.2)
+
+
+2. Estrutura do Projeto
+textpersonalizador/
+├── __init__.py
+├── layout.py
+├── painel.py
+├── progresso.py
+├── estilo.py
+main.py
+README.md
+
+Código dos Módulos
+personalizador/__init__.py
+Python"""
+Pacote personalizador - Utilitários de formatação com Rich
+"""
+
+__version__ = "1.0.0"
+__all__ = ["layout", "painel", "progresso", "estilo"]
+personalizador/layout.py
+Python"""
+Módulo layout: Funcionalidades de layout da biblioteca Rich.
+"""
+
+from rich.console import Console
+from rich.panel import Panel
+from rich.layout import Layout
+from rich.align import Align
+import os
+
+
+def centralizado(texto: str, is_arquivo: bool = False) -> None:
+    """
+    Exibe o texto centralizado na tela usando Align.
+
+    Args:
+        texto (str): Texto ou caminho do arquivo.
+        is_arquivo (bool): Se True, lê o conteúdo do arquivo.
+    """
+    console = Console()
+    if is_arquivo and os.path.exists(texto):
+        with open(texto, 'r', encoding='utf-8') as f:
+            conteudo = f.read()
+    else:
+        conteudo = texto
+
+    console.print(Align.center(conteudo, vertical="middle"), width=80)
+
+
+def layout_dividido(texto: str, is_arquivo: bool = False) -> None:
+    """
+    Exibe o texto em um layout dividido (2 colunas) usando Rich Layout.
+    """
+    console = Console()
+    if is_arquivo and os.path.exists(texto):
+        with open(texto, 'r', encoding='utf-8') as f:
+            conteudo = f.read()
+    else:
+        conteudo = texto
+
+    layout = Layout()
+    layout.split_row(
+        Layout(name="left"),
+        Layout(name="right")
+    )
+    layout["left"].update(Panel(conteudo, title="Esquerda"))
+    layout["right"].update(Panel("Conteúdo adicional ou menu", title="Direita"))
+
+    console.print(layout)
+personalizador/painel.py
+Python"""
+Módulo painel: Funcionalidades de Painel da biblioteca Rich.
+"""
+
+from rich.console import Console
+from rich.panel import Panel
+from rich import box
+import os
+
+
+def painel_simples(texto: str, is_arquivo: bool = False) -> None:
+    """
+    Exibe o texto dentro de um painel simples.
+    """
+    console = Console()
+    if is_arquivo and os.path.exists(texto):
+        with open(texto, 'r', encoding='utf-8') as f:
+            conteudo = f.read()
+    else:
+        conteudo = texto
+
+    console.print(Panel(conteudo, title="Informação", border_style="blue"))
+
+
+def painel_estilizado(texto: str, is_arquivo: bool = False) -> None:
+    """
+    Exibe o texto em um painel com bordas duplas e título colorido.
+    """
+    console = Console()
+    if is_arquivo and os.path.exists(texto):
+        with open(texto, 'r', encoding='utf-8') as f:
+            conteudo = f.read()
+    else:
+        conteudo = texto
+
+    painel = Panel(
+        conteudo,
+        title="[bold magenta]Personalizador Rich[/bold magenta]",
+        subtitle="by Grok",
+        box=box.DOUBLE,
+        border_style="green",
+        padding=(1, 2)
+    )
+    console.print(painel)
+personalizador/progresso.py
+Python"""
+Módulo progresso: Funcionalidades de barra de progresso da biblioteca Rich.
+"""
+
+from rich.console import Console
+from rich.progress import Progress, SpinnerColumn, TextColumn, BarColumn, TaskProgressColumn
+import time
+import os
+
+
+def progresso_simples(texto: str, is_arquivo: bool = False) -> None:
+    """
+    Simula processamento do texto com barra de progresso.
+    """
+    console = Console()
+    if is_arquivo and os.path.exists(texto):
+        with open(texto, 'r', encoding='utf-8') as f:
+            conteudo = f.read()
+    else:
+        conteudo = texto
+
+    with Progress(
+        SpinnerColumn(),
+        TextColumn("[progress.description]{task.description}"),
+        BarColumn(),
+        TaskProgressColumn()
+    ) as progress:
+        task = progress.add_task("[cyan]Processando texto...", total=100)
+
+        for i in range(100):
+            progress.update(task, advance=1)
+            time.sleep(0.02)
+
+    console.print(f"[bold green]✓ Pronto![/bold green]\n{conteudo[:500]}{'...' if len(conteudo) > 500 else ''}")
+
+
+def spinner_carregamento(texto: str, is_arquivo: bool = False) -> None:
+    """
+    Exibe spinner enquanto "carrega" o texto.
+    """
+    console = Console()
+    if is_arquivo and os.path.exists(texto):
+        with open(texto, 'r', encoding='utf-8') as f:
+            conteudo = f.read()
+    else:
+        conteudo = texto
+
+    with console.status("[bold yellow]Carregando conteúdo...[/bold yellow]", spinner="dots"):
+        time.sleep(1.5)
+
+    console.print(Panel(conteudo, title="Conteúdo Carregado", border_style="yellow"))
+personalizador/estilo.py
+Python"""
+Módulo estilo: Funcionalidades de estilo e cores da biblioteca Rich.
+"""
+
+from rich.console import Console
+from rich.text import Text
+import os
+
+
+def texto_colorido(texto: str, is_arquivo: bool = False) -> None:
+    """
+    Exibe o texto com múltiplas cores e estilos.
+    """
+    console = Console()
+    if is_arquivo and os.path.exists(texto):
+        with open(texto, 'r', encoding='utf-8') as f:
+            conteudo = f.read()
+    else:
+        conteudo = texto
+
+    texto_formatado = Text()
+    texto_formatado.append("✨ ", style="bold magenta")
+    texto_formatado.append(conteudo, style="bold cyan")
+    console.print(texto_formatado)
+
+
+def texto_com_efeitos(texto: str, is_arquivo: bool = False) -> None:
+    """
+    Exibe texto com negrito, itálico, underline e cores.
+    """
+    console = Console()
+    if is_arquivo and os.path.exists(texto):
+        with open(texto, 'r', encoding='utf-8') as f:
+            conteudo = f.read()
+    else:
+        conteudo = texto
+
+    console.print(f"[bold red]TÍTULO:[/bold red] [italic green]{conteudo[:100]}[/italic green]")
+    console.print(f"[underline blue]{conteudo}[/underline blue]")
+
+3. Interface de Linha de Comando (main.py)
+Python"""
+Interface de linha de comando para o pacote personalizador.
+"""
+
+import argparse
+import sys
+import os
+from personalizador import layout, painel, progresso, estilo
+
+# Mapeamento de módulos e funções
+MODULOS = {
+    "1": layout,
+    "2": painel,
+    "3": progresso,
+    "4": estilo,
+    "layout": layout,
+    "painel": painel,
+    "progresso": progresso,
+    "estilo": estilo,
+}
+
+FUNCOES = {
+    "layout": {
+        "1": layout.centralizado,
+        "2": layout.layout_dividido,
+    },
+    "painel": {
+        "1": painel.painel_simples,
+        "2": painel.painel_estilizado,
+    },
+    "progresso": {
+        "1": progresso.progresso_simples,
+        "2": progresso.spinner_carregamento,
+    },
+    "estilo": {
+        "1": estilo.texto_colorido,
+        "2": estilo.texto_com_efeitos,
+    }
+}
+
+
+def main():
+    parser = argparse.ArgumentParser(
+        description="Personalizador de Texto com Rich",
+        formatter_class=argparse.RawDescriptionHelpFormatter
+    )
+
+    parser.add_argument("texto", help="Texto ou caminho do arquivo")
+    parser.add_argument("-a", "--arquivo", action="store_true",
+                        help="Indica que o argumento 'texto' é um caminho de arquivo")
+    parser.add_argument("-m", "--modulo", required=True,
+                        help="""Módulo a ser usado:
+1 ou layout
+2 ou painel
+3 ou progresso
+4 ou estilo""")
+    parser.add_argument("-f", "--funcao", required=True,
+                        help="""Função do módulo:
+1 ou 2 (dependendo do módulo)""")
+
+    args = parser.parse_args()
+
+    modulo = MODULOS.get(args.modulo.lower() if args.modulo.lower() in ["layout", "painel", "progresso", "estilo"] else args.modulo)
+    if not modulo:
+        print("❌ Módulo inválido!")
+        sys.exit(1)
+
+    # Obter função
+    funcoes_modulo = FUNCOES.get(args.modulo.lower() if args.modulo.lower() in FUNCOES else args.modulo, {})
+    funcao = funcoes_modulo.get(args.funcao)
+    if not funcao:
+        print("❌ Função inválida!")
+        sys.exit(1)
+
+    funcao(args.texto, args.arquivo)
+
+
+if __name__ == "__main__":
+    main()
+
+4. Gerar Documentação HTML
+Bash# Dentro do ambiente virtual
+python -m pydoc -w personalizador.layout
+python -m pydoc -w personalizador.painel
+python -m pydoc -w personalizador.progresso
+python -m pydoc -w personalizador.estilo
+python -m pydoc -w personalizador
+
+# Ou gerar para todo o pacote:
+python -m pydoc -w personalizador
+Os arquivos .html serão gerados na pasta atual.
+
+Como Usar
+Bash# Exemplo
+python main.py "Olá, mundo!" -m layout -f 1
+python main.py arquivo.txt -a -m painel -f 2
+python main.py "Teste de progresso" -m progresso -f 1
+
+Tudo pronto!
