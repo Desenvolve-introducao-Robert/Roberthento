@@ -1,0 +1,499 @@
+Estrutura completa do projeto “Aventura no Labirinto”
+aventura_no_labirinto/
+│
+├── aventura_pkg/
+│   ├── __init__.py
+│   ├── labirinto.py
+│   ├── jogador.py
+│   └── utils.py
+│
+├── docs/
+│   └── instrucoes.txt
+│
+├── main.py
+├── requirements.txt
+├── README.md
+└── aventura_pkg.html
+1. Criando o ambiente virtual
+Windows
+python -m venv venv
+venv\Scripts\activate
+Linux/Mac
+python3 -m venv venv
+source venv/bin/activate
+2. Instalando bibliotecas
+pip install rich pynput playsound pdoc
+3. Gerando requirements.txt
+pip freeze > requirements.txt
+4. Código completo
+arquivo: aventura_pkg/__init__.py
+"""
+Pacote principal do jogo Aventura no Labirinto.
+"""
+arquivo: aventura_pkg/labirinto.py
+"""
+Módulo responsável pela criação e impressão do labirinto.
+"""
+
+import random
+from rich.console import Console
+
+console = Console()
+
+
+def criar_labirinto(largura=10, altura=10):
+    """
+    Cria um labirinto aleatório.
+
+    Args:
+        largura (int): largura do mapa
+        altura (int): altura do mapa
+
+    Returns:
+        list: matriz representando o labirinto
+    """
+
+    lab = []
+
+    for y in range(altura):
+        linha = []
+
+        for x in range(largura):
+
+            if x == 0 or y == 0 or x == largura - 1 or y == altura - 1:
+                linha.append("#")
+            else:
+                if random.randint(0, 4) == 0:
+                    linha.append("#")
+                else:
+                    linha.append(" ")
+
+        lab.append(linha)
+
+    lab[1][1] = "J"
+    lab[altura - 2][largura - 2] = "S"
+
+    for _ in range(3):
+        x = random.randint(1, largura - 2)
+        y = random.randint(1, altura - 2)
+
+        if lab[y][x] == " ":
+            lab[y][x] = "*"
+
+    return lab
+
+
+def imprimir_labirinto(lab):
+    """
+    Imprime o labirinto formatado.
+
+    Args:
+        lab (list): matriz do labirinto
+    """
+
+    console.clear()
+
+    for linha in lab:
+
+        texto = ""
+
+        for item in linha:
+
+            if item == "#":
+                texto += "[red]█[/red]"
+            elif item == "J":
+                texto += "[green]😀[/green]"
+            elif item == "S":
+                texto += "[yellow]🏁[/yellow]"
+            elif item == "*":
+                texto += "[cyan]★[/cyan]"
+            else:
+                texto += " "
+
+        console.print(texto)
+arquivo: aventura_pkg/jogador.py
+"""
+Módulo responsável pelas ações do jogador.
+"""
+
+from pynput import keyboard
+
+
+def iniciar_jogador():
+    """
+    Inicializa os dados do jogador.
+
+    Returns:
+        dict: informações do jogador
+    """
+
+    return {
+        "x": 1,
+        "y": 1,
+        "pontos": 0
+    }
+
+
+def pontuar(jogador, valor):
+    """
+    Atualiza pontuação do jogador.
+
+    Args:
+        jogador (dict): dados do jogador
+        valor (int): pontos recebidos
+    """
+
+    jogador["pontos"] += valor
+
+
+def mover(tecla, jogador, lab):
+    """
+    Move o jogador pelo mapa.
+
+    Args:
+        tecla: tecla pressionada
+        jogador (dict): dados do jogador
+        lab (list): mapa do jogo
+
+    Returns:
+        bool: True se venceu
+    """
+
+    x = jogador["x"]
+    y = jogador["y"]
+
+    novo_x = x
+    novo_y = y
+
+    if tecla == "w":
+        novo_y -= 1
+
+    elif tecla == "s":
+        novo_y += 1
+
+    elif tecla == "a":
+        novo_x -= 1
+
+    elif tecla == "d":
+        novo_x += 1
+
+    destino = lab[novo_y][novo_x]
+
+    if destino != "#":
+
+        if destino == "*":
+            pontuar(jogador, 10)
+
+        if destino == "S":
+            return True
+
+        lab[y][x] = " "
+        lab[novo_y][novo_x] = "J"
+
+        jogador["x"] = novo_x
+        jogador["y"] = novo_y
+
+    return False
+
+
+def resolver_labirinto(lab, x, y, visitados=None):
+    """
+    Função recursiva que encontra saída do labirinto.
+
+    Args:
+        lab (list): mapa
+        x (int): posição x
+        y (int): posição y
+        visitados (set): posições visitadas
+
+    Returns:
+        list: caminho da solução
+    """
+
+    if visitados is None:
+        visitados = set()
+
+    if (x, y) in visitados:
+        return None
+
+    visitados.add((x, y))
+
+    if lab[y][x] == "S":
+        return []
+
+    movimentos = [
+        ("w", x, y - 1),
+        ("s", x, y + 1),
+        ("a", x - 1, y),
+        ("d", x + 1, y)
+    ]
+
+    for direcao, nx, ny in movimentos:
+
+        if lab[ny][nx] != "#":
+
+            resultado = resolver_labirinto(
+                lab,
+                nx,
+                ny,
+                visitados
+            )
+
+            if resultado is not None:
+                return [direcao] + resultado
+
+    return None
+arquivo: aventura_pkg/utils.py
+"""
+Funções utilitárias do jogo.
+"""
+
+import time
+from rich.console import Console
+from rich.panel import Panel
+
+console = Console()
+
+
+def imprimir_menu():
+    """
+    Mostra menu inicial.
+    """
+
+    console.print(
+        Panel.fit(
+            "[bold green]Aventura no Labirinto[/bold green]\n"
+            "1 - Jogar\n"
+            "2 - Instruções\n"
+            "3 - Resolver automaticamente\n"
+            "4 - Sair"
+        )
+    )
+
+
+def imprimir_instrucoes():
+    """
+    Lê e imprime instruções do arquivo.
+    """
+
+    with open("docs/instrucoes.txt", "r", encoding="utf-8") as arq:
+        texto = arq.read()
+
+    console.print(Panel(texto))
+
+
+def animacao_vitoria(n):
+    """
+    Animação recursiva de vitória.
+
+    Args:
+        n (int): quantidade de repetições
+    """
+
+    if n == 0:
+        return
+
+    console.print("[bold yellow]VOCÊ VENCEU![/bold yellow]")
+    time.sleep(0.3)
+
+    animacao_vitoria(n - 1)
+arquivo: docs/instrucoes.txt
+OBJETIVO:
+Chegue até a bandeira.
+
+CONTROLES:
+W = cima
+S = baixo
+A = esquerda
+D = direita
+
+Colete estrelas para ganhar pontos.
+arquivo: main.py
+"""
+Arquivo principal do jogo.
+"""
+
+import argparse
+import time
+
+from aventura_pkg.labirinto import (
+    criar_labirinto,
+    imprimir_labirinto
+)
+
+from aventura_pkg.jogador import (
+    iniciar_jogador,
+    mover,
+    resolver_labirinto
+)
+
+from aventura_pkg.utils import (
+    imprimir_menu,
+    imprimir_instrucoes,
+    animacao_vitoria
+)
+
+
+def main():
+
+    parser = argparse.ArgumentParser(
+        description="Jogo Aventura no Labirinto"
+    )
+
+    parser.add_argument(
+        "--name",
+        required=True,
+        help="Nome do jogador"
+    )
+
+    parser.add_argument(
+        "--color",
+        default="green",
+        help="Cor principal"
+    )
+
+    parser.add_argument(
+        "--dificuldade",
+        type=int,
+        default=1,
+        help="Dificuldade do jogo"
+    )
+
+    parser.add_argument(
+        "--disable-sound",
+        action="store_true",
+        help="Desliga sons"
+    )
+
+    parser.add_argument(
+        "--max-moves",
+        type=int,
+        default=100,
+        help="Máximo de movimentos"
+    )
+
+    args = parser.parse_args()
+
+    while True:
+
+        imprimir_menu()
+
+        opcao = input("Escolha: ")
+
+        match opcao:
+
+            case "1":
+
+                tamanho = 10 + args.dificuldade * 2
+
+                lab = criar_labirinto(
+                    tamanho,
+                    tamanho
+                )
+
+                jogador = iniciar_jogador()
+
+                venceu = False
+
+                movimentos = 0
+
+                while not venceu and movimentos < args.max_moves:
+
+                    imprimir_labirinto(lab)
+
+                    print(
+                        f"Jogador: {args.name}"
+                    )
+
+                    print(
+                        f"Pontos: {jogador['pontos']}"
+                    )
+
+                    tecla = input(
+                        "Mover (WASD): "
+                    ).lower()
+
+                    venceu = mover(
+                        tecla,
+                        jogador,
+                        lab
+                    )
+
+                    movimentos += 1
+
+                if venceu:
+
+                    animacao_vitoria(5)
+
+                    print(
+                        f"Parabéns {args.name}!"
+                    )
+
+                else:
+
+                    print("Fim de jogo!")
+
+            case "2":
+                imprimir_instrucoes()
+
+            case "3":
+
+                lab = criar_labirinto()
+
+                caminho = resolver_labirinto(
+                    lab,
+                    1,
+                    1
+                )
+
+                print("Solução encontrada:")
+                print(caminho)
+
+                time.sleep(3)
+
+            case "4":
+                break
+
+            case _:
+                print("Opção inválida")
+
+
+if __name__ == "__main__":
+    main()
+5. Gerando documentação HTML
+Instalar
+pip install pdoc
+Gerar HTML
+pdoc aventura_pkg -o .
+
+Isso cria:
+
+aventura_pkg.html
+6. Exemplo de execução
+python main.py --name Robert --dificuldade 2 --max-moves 150
+7. Exemplo de requirements.txt
+rich
+pynput
+playsound
+pdoc
+8. README.md (modelo)
+# Aventura no Labirinto
+
+Jogo de terminal desenvolvido em Python.
+
+## Funcionalidades
+
+- Labirinto aleatório
+- Sistema de pontuação
+- Função recursiva
+- CLI com argparse
+- Interface colorida com Rich
+- Documentação automática
+
+## Como executar
+
+python main.py --name Robert
+
+## Controles
+
+W A S D
