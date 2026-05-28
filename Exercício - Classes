@@ -1,0 +1,127 @@
+```python
+from datetime import datetime
+
+
+class Evento:
+    # Atributo de classe
+    total_eventos = 0
+
+    # Método construtor
+    def __init__(self, titulo, data_hora, descricao):
+        self.titulo = titulo
+        self.data_hora = data_hora
+        self.descricao = descricao
+        self.is_concluido = False
+
+        # Incrementa o total de eventos
+        Evento.total_eventos += 1
+
+    # Método de instância
+    def isConcluido(self):
+        if self.data_hora < datetime.now():
+            self.is_concluido = True
+
+    # Método de classe
+    @classmethod
+    def num_eventos(cls):
+        return cls.total_eventos
+
+    # Método estático
+    @staticmethod
+    def valida_evento(nome, data_hora, descricao):
+        return (
+            isinstance(nome, str)
+            and isinstance(data_hora, datetime)
+            and isinstance(descricao, str)
+        )
+
+    # Método mágico __str__
+    def __str__(self):
+        return (
+            f"Evento: {self.titulo}, "
+            f"Data: {self.data_hora}, "
+            f"Descrição: {self.descricao}, "
+            f"Concluido: {self.is_concluido}"
+        )
+
+    # Métodos de comparação
+    def __eq__(self, other):
+        return self.data_hora == other.data_hora
+
+    def __ne__(self, other):
+        return self.data_hora != other.data_hora
+
+    def __lt__(self, other):
+        return self.data_hora < other.data_hora
+
+    def __le__(self, other):
+        return self.data_hora <= other.data_hora
+
+    def __gt__(self, other):
+        return self.data_hora > other.data_hora
+
+    def __ge__(self, other):
+        return self.data_hora >= other.data_hora
+
+
+# =========================
+# TESTES
+# =========================
+
+# Criando eventos
+evento1 = Evento(
+    "Reunião",
+    datetime(2025, 5, 10, 14, 0),
+    "Reunião com a equipe"
+)
+
+evento2 = Evento(
+    "Consulta Médica",
+    datetime(2026, 12, 20, 9, 30),
+    "Consulta anual"
+)
+
+# Imprimindo atributos
+print("=== ATRIBUTOS DOS EVENTOS ===")
+print(evento1)
+print(evento2)
+
+print("\nTotal de eventos criados:", Evento.total_eventos)
+
+# Testando isConcluido()
+evento1.isConcluido()
+
+print("\n=== TESTE isConcluido ===")
+print("Evento 1 concluído?", evento1.is_concluido)
+
+# Testando método de classe
+print("\n=== TESTE num_eventos ===")
+print("Número total de eventos:", Evento.num_eventos())
+
+# Testando método estático
+print("\n=== TESTE valida_evento ===")
+print(
+    Evento.valida_evento(
+        "Festa",
+        datetime.now(),
+        "Aniversário"
+    )
+)
+
+print(
+    Evento.valida_evento(
+        123,
+        "01/01/2025",
+        True
+    )
+)
+
+# Comparações
+print("\n=== COMPARAÇÕES ===")
+print("evento1 == evento2:", evento1 == evento2)
+print("evento1 != evento2:", evento1 != evento2)
+print("evento1 < evento2:", evento1 < evento2)
+print("evento1 <= evento2:", evento1 <= evento2)
+print("evento1 > evento2:", evento1 > evento2)
+print("evento1 >= evento2:", evento1 >= evento2)
+```
