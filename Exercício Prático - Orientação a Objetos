@@ -1,0 +1,221 @@
+```python
+from abc import ABC, abstractmethod
+from datetime import datetime, timedelta
+
+
+# ==========================
+# Q1 - Classe abstrata EventoABC
+# ==========================
+class EventoABC(ABC):
+
+    def __init__(self, titulo, descricao):
+        self._titulo = titulo
+        self._descricao = descricao
+
+    @abstractmethod
+    def __str__(self):
+        pass
+
+    @abstractmethod
+    def isConcluido(self):
+        pass
+
+
+# ==========================
+# Q2 - Classe DataHora
+# ==========================
+class DataHora:
+
+    FORMAT = '%d/%m/%Y, %H:%M'
+
+    @property
+    def data_hora(self):
+        return self._data_hora.strftime(self.FORMAT)
+
+    @data_hora.setter
+    def data_hora(self, valor):
+        try:
+            self._data_hora = datetime.strptime(valor, self.FORMAT)
+        except:
+            raise ValueError(
+                "Data inválida. Use %d/%m/%Y, %H:%M"
+            )
+
+    def isPassado(self):
+        return self._data_hora < datetime.now()
+
+    def somaDias(self, num_dias):
+        nova = self._data_hora + timedelta(days=num_dias)
+        return nova.strftime(self.FORMAT)
+
+
+# ==========================
+# TESTE Q2
+# ==========================
+dh = DataHora()
+
+dh.data_hora = '05/02/2024, 12:30'
+
+dh.data_hora = dh.somaDias(30)
+
+print(dh.data_hora, dh.isPassado())
+
+
+# ==========================
+# Q3 - EventoUnico
+# ==========================
+class EventoUnico(EventoABC):
+
+    def __init__(self, titulo, descricao, data_hora):
+
+        super().__init__(titulo, descricao)
+
+        self._data_hora = DataHora()
+        self._data_hora.data_hora = data_hora
+
+    def isConcluido(self):
+        return self._data_hora.isPassado()
+
+    def editar_data_hora(self, nova_data):
+        self._data_hora.data_hora = nova_data
+
+    def __str__(self):
+
+        return (
+            f'Evento: {self._titulo}, '
+            f'Data: {self._data_hora.data_hora}, '
+            f'Descrição: {self._descricao}, '
+            f'Concluído: {self.isConcluido()}'
+        )
+
+
+# TESTE
+evento = EventoUnico(
+    'Reunião',
+    'Sala 302, prédio da esquina',
+    '05/10/2023, 16:30'
+)
+
+print(evento)
+
+evento.editar_data_hora(
+    '05/10/2024, 16:30'
+)
+
+print(evento)
+
+
+# ==========================
+# Q3 - EventoRecorrente
+# ==========================
+class EventoRecorrente(EventoABC):
+
+    def __init__(
+            self,
+            titulo,
+            descricao,
+            data_inicial,
+            data_final,
+            intervalo):
+
+        super().__init__(titulo, descricao)
+
+        self._datas_hora = []
+
+        atual = DataHora()
+        atual.data_hora = data_inicial
+
+        limite = datetime.strptime(
+            data_final,
+            DataHora.FORMAT
+        )
+
+        while atual._data_hora <= limite:
+
+            novo = DataHora()
+            novo.data_hora = atual.data_hora
+
+            self._datas_hora.append(novo)
+
+            atual.data_hora = atual.somaDias(
+                intervalo
+            )
+
+    def isConcluido(self, indice=0):
+
+        return (
+            self._datas_hora[indice]
+            .isPassado()
+        )
+
+    def editar_data_hora(
+            self,
+            antiga,
+            nova):
+
+        for item in self._datas_hora:
+
+            if item.data_hora == antiga:
+                item.data_hora = nova
+                break
+
+    def __str__(self):
+
+        texto = ''
+
+        for i, item in enumerate(
+                self._datas_hora):
+
+            texto += (
+                f'Evento: {self._titulo}, '
+                f'Data: {item.data_hora}, '
+                f'Descrição: {self._descricao}, '
+                f'Concluído: {self.isConcluido(i)}\n'
+            )
+
+        return texto
+
+
+# TESTE
+eventos = EventoRecorrente(
+    'Reunião',
+    'Sala 302',
+    '05/01/2024, 16:30',
+    '05/01/2025, 16:30',
+    30
+)
+
+print(eventos)
+
+eventos.editar_data_hora(
+    '05/12/2024, 16:30',
+    '05/12/2024, 11:30'
+)
+
+print(eventos)
+
+
+# ==========================
+# Q4 - Polimorfismo
+# ==========================
+
+lista_eventos = [
+
+    EventoUnico(
+        'Prova',
+        'Sala A',
+        '20/07/2026, 09:00'
+    ),
+
+    EventoRecorrente(
+        'Treino',
+        'Academia',
+        '01/07/2026, 08:00',
+        '01/09/2026, 08:00',
+        15
+    )
+]
+
+for evento in lista_eventos:
+    print(evento)
+```
