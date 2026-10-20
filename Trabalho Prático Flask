@@ -1,0 +1,509 @@
+flask
+flask-sqlalchemy
+flask-login
+python-dotenv
+
+from app import app  # noqa: F401  (o comando "flask run" usa esta variável)
+
+# Microblog (Flask)
+
+```bash
+python -m venv flask_env
+source flask_env/bin/activate        # Windows: flask_env\Scripts\activate
+pip install -r requirements.txt
+flask run
+```
+Acesse http://127.0.0.1:5000. O banco é criado em `instance/microblog.db` na primeira execução.
+
+FLASK_APP=microblog.py
+FLASK_DEBUG=1
+
+# Todas as funções de usuário retornam o objeto User (ou None).
+from datetime import datetime
+
+import sqlalchemy as sa
+
+from app import db
+from app.models.models import Post, User
+
+
+def validate_user_password(username, password):
+    res = db.session.execute(sa.select(User).where(User.username == username))
+    user = res.scalars().first()
+    if user and user.password == password:
+        return user
+    return None
+
+
+def user_exists(username):
+    res = db.session.execute(sa.select(User).where(User.username == username))
+    user = res.scalars().first()
+    return user
+
+
+def create_user(username, password, remember=False, last_login=None, foto=None, bio=None):
+    new_user = User(
+        username=username,
+        password=password,
+        remember=remember,
+        last_login=last_login or datetime.now(),
+        foto=foto or None,
+        bio=bio or None,
+    )
+    db.session.add(new_user)
+    db.session.commit()
+    return new_user
+
+
+def create_post(body, user):
+    """Cria um post para o usuário autenticado (user_id vem do relationship)."""
+    new_post = Post(body=body, author=user)
+    db.session.add(new_post)
+    db.session.commit()
+    return new_post
+
+
+def get_timeline():
+    """Os 5 posts mais recentes. Sem join: post.author já traz o usuário."""
+    query = sa.select(Post).order_by(Post.timestamp.desc()).limit(5)
+    return db.session.execute(query).scalars().all()
+
+from flask import Flask
+from flask_sqlalchemy import SQLAlchemy
+from flask_login import LoginManager
+
+app = Flask(__name__)
+app.config["SECRET_KEY"] = "PD12345678"
+# O caminho relativo é resolvido dentro da pasta instance/
+app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///microblog.db"
+
+db = SQLAlchemy(app)
+
+login = LoginManager(app)
+login.login_view = "login"  # para onde redirecionar quem não está logado
+login.login_message = "Faça login para acessar esta página."
+
+# Importados no final para evitar importação circular
+from app.models import models  # noqa: E402,F401
+from app import routes  # noqa: E402,F401
+
+with app.app_context():
+    db.create_all()
+
+from datetime import datetime
+
+from flask import flash, redirect, render_template, request, url_for
+from flask_login import (
+    current_user,   # objeto User atual
+    login_required,  # decorador de rotas que exigem login
+    login_user,     # método de login
+    logout_user,    # método de logout
+)
+
+from app import alquimias, app, db
+
+
+@app.route('/')
+@login_required
+def index():
+    user = None
+    posts = None
+    if current_user.is_authenticated:
+        user = current_user
+        posts = alquimias.get_timeline()
+    return render_template('index.html', title='Início', user=user, posts=posts)
+
+
+@app.route('/login', methods=['GET', 'POST'])
+def login():
+    if current_user.is_authenticated:
+        return redirect(url_for('index'))
+    if request.method == 'POST':
+        username = request.form['username'].strip().lower()
+        password = request.form['password']
+
+        user = alquimias.validate_user_password(username, password)
+        if user:
+            user.last_login = datetime.now()
+            db.session.commit()
+            login_user(user, remember=user.remember)
+            return redirect(url_for('index'))
+        flash('Usuário ou senha inválidos.', 'erro')
+        return redirect(url_for('login'))
+    # request.method == GET
+    return render_template('login.html', title='Entrar')
+
+
+@app.route('/cadastro', methods=['GET', 'POST'])
+def cadastro():
+    if current_user.is_authenticated:
+        return redirect(url_for('index'))
+    if request.method == 'POST':
+        username = request.form['username'].strip().lower()
+        password = request.form['password']
+        foto = request.form.get('foto', '').strip()
+        bio = request.form.get('bio', '').strip()
+        remember = request.form.get('remember') == 'on'
+
+        if not username or not password:
+            flash('Usuário e senha são obrigatórios.', 'erro')
+            return redirect(url_for('cadastro'))
+        if foto and not foto.startswith(('http://', 'https://')):
+            flash('A foto deve ser uma URL começando com http:// ou https://.', 'erro')
+            return redirect(url_for('cadastro'))
+        if alquimias.user_exists(username):
+            flash('Usuário já existe!', 'erro')
+            return redirect(url_for('login'))
+
+        user = alquimias.create_user(username, password, remember, foto=foto, bio=bio)
+        login_user(user, remember=remember)
+        return redirect(url_for('index'))
+    return render_template('cadastro.html', title='Cadastro')
+
+
+@app.route('/logout')
+def logout():
+    logout_user()
+    return redirect(url_for('index'))
+
+
+@app.route('/post', methods=['GET', 'POST'])
+@login_required
+def post():
+    if request.method == 'POST':
+        body = request.form.get('body', '').strip()
+        if not body:
+            flash('O post não pode estar vazio.', 'erro')
+            return redirect(url_for('post'))
+        if len(body) > 280:
+            flash('O post deve ter no máximo 280 caracteres.', 'erro')
+            return redirect(url_for('post'))
+        alquimias.create_post(body, current_user)
+        return redirect(url_for('index'))
+    return render_template('post.html', title='Escrever post')
+
+:root {
+  --fundo: #f4f6f8;
+  --superficie: #ffffff;
+  --texto: #1b1f23;
+  --texto-suave: #4a5560;
+  --primaria: #1d4ed8;
+  --primaria-escura: #1e3a8a;
+  --borda: #d0d7de;
+  --erro-fundo: #fde8e8;  --erro-texto: #7f1d1d;
+  --ok-fundo: #e3f6e8;    --ok-texto: #14532d;
+}
+
+* { box-sizing: border-box; }
+
+body {
+  margin: 0;
+  font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  line-height: 1.6;
+  color: var(--texto);
+  background: var(--fundo);
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+}
+
+a { color: var(--primaria); }
+a:hover { color: var(--primaria-escura); }
+
+:focus-visible { outline: 3px solid #f59e0b; outline-offset: 2px; }
+
+.pular {
+  position: absolute; left: -999px; top: 0;
+  background: #000; color: #fff; padding: .5rem 1rem; z-index: 10;
+}
+.pular:focus { left: 0; }
+
+.topo { background: var(--primaria); }
+.topo nav {
+  max-width: 760px; margin: 0 auto; padding: .75rem 1rem;
+  display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: .5rem;
+}
+.topo ul { list-style: none; display: flex; flex-wrap: wrap; gap: 1rem; margin: 0; padding: 0; }
+.topo a { color: #fff; text-decoration: none; font-weight: 500; padding: .25rem .1rem; }
+.topo a:hover, .topo a:focus-visible { text-decoration: underline; color: #fff; }
+.marca { font-size: 1.25rem; font-weight: 700 !important; }
+
+main { flex: 1; width: 100%; max-width: 760px; margin: 0 auto; padding: 1.5rem 1rem; }
+
+h1, h2 { line-height: 1.25; margin-top: 0; }
+
+.cartao {
+  background: var(--superficie);
+  border: 1px solid var(--borda);
+  border-radius: 10px;
+  padding: 1.25rem;
+  margin-bottom: 1rem;
+}
+
+.perfil { display: flex; gap: 1.25rem; align-items: center; }
+.avatar {
+  width: 96px; height: 96px; border-radius: 50%; object-fit: cover; flex-shrink: 0;
+  border: 2px solid var(--borda);
+}
+.avatar.pequeno { width: 44px; height: 44px; }
+.avatar.sem-foto {
+  display: flex; align-items: center; justify-content: center;
+  background: var(--primaria); color: #fff; font-size: 2rem; font-weight: 700;
+}
+.avatar.pequeno.sem-foto { font-size: 1.1rem; }
+
+.lista-posts { list-style: none; padding: 0; margin: 0; }
+.post .autor { display: flex; align-items: center; gap: .75rem; margin-bottom: .5rem; }
+.post time { display: block; font-size: .85rem; color: var(--texto-suave); }
+.post p { margin: 0; white-space: pre-wrap; overflow-wrap: anywhere; }
+
+.formulario { max-width: 520px; margin-left: auto; margin-right: auto; }
+.campo { margin-bottom: 1rem; }
+.campo label { display: block; font-weight: 600; margin-bottom: .25rem; }
+.campo small { display: block; color: var(--texto-suave); margin-top: .25rem; }
+.campo.check { display: flex; align-items: center; gap: .5rem; }
+.campo.check label { margin: 0; font-weight: 400; }
+
+input[type="text"], input[type="password"], input[type="url"], textarea {
+  width: 100%; padding: .6rem .75rem; font: inherit;
+  border: 1px solid #8b949e; border-radius: 6px; background: #fff; color: var(--texto);
+}
+textarea { resize: vertical; }
+
+.botao {
+  display: inline-block; padding: .6rem 1.2rem; font: inherit; font-weight: 600;
+  background: var(--primaria); color: #fff; border: 2px solid var(--primaria);
+  border-radius: 6px; text-decoration: none; cursor: pointer;
+}
+.botao:hover { background: var(--primaria-escura); border-color: var(--primaria-escura); color: #fff; }
+.botao.secundario { background: transparent; color: var(--primaria); }
+.botao.secundario:hover { background: #e8eefc; color: var(--primaria-escura); }
+
+.mensagem { padding: .75rem 1rem; border-radius: 6px; margin: 0 0 .5rem; font-weight: 500; }
+.mensagem.erro { background: var(--erro-fundo); color: var(--erro-texto); }
+.mensagem.sucesso { background: var(--ok-fundo); color: var(--ok-texto); }
+
+.rodape { text-align: center; color: var(--texto-suave); padding: 1rem; font-size: .9rem; }
+
+@media (max-width: 520px) {
+  .perfil { flex-direction: column; text-align: center; }
+}
+
+{% extends "base.html" %}
+
+{% block content %}
+  <section class="cartao formulario">
+    <h1>Cadastro</h1>
+    <form method="post">
+      <div class="campo">
+        <label for="username">Usuário</label>
+        <input type="text" id="username" name="username" required maxlength="64" autocomplete="username" autofocus>
+      </div>
+      <div class="campo">
+        <label for="password">Senha</label>
+        <input type="password" id="password" name="password" required autocomplete="new-password">
+      </div>
+      <div class="campo">
+        <label for="foto">Foto de perfil (URL)</label>
+        <input type="url" id="foto" name="foto" maxlength="500" placeholder="https://exemplo.com/foto.jpg" aria-describedby="ajuda-foto">
+        <small id="ajuda-foto">Opcional. Cole o link de uma imagem.</small>
+      </div>
+      <div class="campo">
+        <label for="bio">Bio</label>
+        <textarea id="bio" name="bio" rows="4" maxlength="300" aria-describedby="ajuda-bio"></textarea>
+        <small id="ajuda-bio">Opcional. Descreva-se em até 300 caracteres.</small>
+      </div>
+      <div class="campo check">
+        <input type="checkbox" id="remember" name="remember">
+        <label for="remember">Lembrar de mim</label>
+      </div>
+      <button type="submit" class="botao">Cadastrar</button>
+    </form>
+    <p>Já tem conta? <a href="{{ url_for('login') }}">Entrar</a>.</p>
+  </section>
+{% endblock %}
+
+{% extends "base.html" %}
+
+{% block content %}
+  <section class="cartao formulario">
+    <h1>Entrar</h1>
+    <form method="post">
+      <div class="campo">
+        <label for="username">Usuário</label>
+        <input type="text" id="username" name="username" required autocomplete="username" autofocus>
+      </div>
+      <div class="campo">
+        <label for="password">Senha</label>
+        <input type="password" id="password" name="password" required autocomplete="current-password">
+      </div>
+      <button type="submit" class="botao">Entrar</button>
+    </form>
+    <p>Não tem conta? <a href="{{ url_for('cadastro') }}">Cadastre-se</a>.</p>
+  </section>
+{% endblock %}
+
+{% extends "base.html" %}
+
+{% block content %}
+  {% if user %}
+    <section class="cartao perfil" aria-labelledby="titulo-perfil">
+      {% if user.foto %}
+        <img class="avatar" src="{{ user.foto }}" alt="Foto de perfil de {{ user.username }}">
+      {% else %}
+        <div class="avatar sem-foto" role="img" aria-label="{{ user.username }} não tem foto de perfil">{{ user.username[0]|upper }}</div>
+      {% endif %}
+      <div>
+        <h1 id="titulo-perfil">Olá, {{ user.username }}!</h1>
+        <p>{{ user.bio if user.bio else "Você ainda não escreveu uma bio." }}</p>
+        <a class="botao" href="{{ url_for('post') }}">Escrever post</a>
+      </div>
+    </section>
+
+    <section aria-labelledby="titulo-timeline">
+      <h2 id="titulo-timeline">Posts recentes</h2>
+      {% if posts %}
+        <ul class="lista-posts">
+          {% for p in posts %}
+            <li class="cartao post">
+              <div class="autor">
+                {% if p.author.foto %}
+                  <img class="avatar pequeno" src="{{ p.author.foto }}" alt="Foto de perfil de {{ p.author.username }}">
+                {% else %}
+                  <div class="avatar pequeno sem-foto" aria-hidden="true">{{ p.author.username[0]|upper }}</div>
+                {% endif %}
+                <div>
+                  <strong>{{ p.author.username }}</strong>
+                  <time datetime="{{ p.timestamp.isoformat() }}">{{ p.timestamp.strftime('%d/%m/%Y às %H:%M') }}</time>
+                </div>
+              </div>
+              <p>{{ p.body }}</p>
+            </li>
+          {% endfor %}
+        </ul>
+      {% else %}
+        <p>Ainda não há posts. Que tal escrever o primeiro?</p>
+      {% endif %}
+    </section>
+  {% else %}
+    <section class="cartao boas-vindas">
+      <h1>Bem-vindo ao Microblog</h1>
+      <p>Entre ou crie uma conta para ver e escrever posts.</p>
+      <p>
+        <a class="botao" href="{{ url_for('login') }}">Entrar</a>
+        <a class="botao secundario" href="{{ url_for('cadastro') }}">Cadastro</a>
+      </p>
+    </section>
+  {% endif %}
+{% endblock %}
+
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>{% if title %}{{ title }} – {% endif %}Microblog</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+  <a class="pular" href="#conteudo">Pular para o conteúdo</a>
+
+  <header class="topo">
+    <nav aria-label="Navegação principal">
+      <a class="marca" href="{{ url_for('index') }}">Microblog</a>
+      <ul>
+        <li><a href="{{ url_for('index') }}">Início</a></li>
+        {% if current_user.is_authenticated %}
+          <li><a href="{{ url_for('post') }}">Escrever post</a></li>
+          <li><a href="{{ url_for('logout') }}">Sair ({{ current_user.username }})</a></li>
+        {% else %}
+          <li><a href="{{ url_for('login') }}">Entrar</a></li>
+          <li><a href="{{ url_for('cadastro') }}">Cadastro</a></li>
+        {% endif %}
+      </ul>
+    </nav>
+  </header>
+
+  <main id="conteudo">
+    {% with mensagens = get_flashed_messages(with_categories=true) %}
+      {% if mensagens %}
+        <div class="mensagens" role="status" aria-live="polite">
+          {% for categoria, mensagem in mensagens %}
+            <p class="mensagem {{ categoria }}">{{ mensagem }}</p>
+          {% endfor %}
+        </div>
+      {% endif %}
+    {% endwith %}
+
+    {% block content %}{% endblock %}
+  </main>
+
+  <footer class="rodape"><p>Microblog – Trabalho Prático de Flask</p></footer>
+</body>
+</html>
+
+{% extends "base.html" %}
+
+{% block content %}
+  <section class="cartao formulario">
+    <h1>Escrever post</h1>
+    <form method="post">
+      <div class="campo">
+        <label for="body">O que você quer compartilhar?</label>
+        <textarea id="body" name="body" rows="5" maxlength="280" required autofocus aria-describedby="ajuda-body"></textarea>
+        <small id="ajuda-body">Máximo de 280 caracteres.</small>
+      </div>
+      <button type="submit" class="botao">Publicar</button>
+      <a class="botao secundario" href="{{ url_for('index') }}">Cancelar</a>
+    </form>
+  </section>
+{% endblock %}
+
+
+from datetime import datetime
+from typing import Optional
+
+import sqlalchemy as sa
+from flask_login import UserMixin
+from sqlalchemy.orm import Mapped, mapped_column, relationship
+
+from app import db, login
+
+
+class User(UserMixin, db.Model):
+    __tablename__ = 'users'
+
+    id: Mapped[int] = mapped_column(primary_key=True)
+    username: Mapped[str] = mapped_column(sa.String(64), unique=True, index=True)
+    password: Mapped[str] = mapped_column(sa.String(128))
+    remember: Mapped[bool] = mapped_column(default=False)
+    last_login: Mapped[Optional[datetime]]
+    foto: Mapped[Optional[str]] = mapped_column(sa.String(500))
+    bio: Mapped[Optional[str]] = mapped_column(sa.String(300))
+
+    # Lado "um" da relação: user.posts devolve os posts do usuário
+    posts: Mapped[list['Post']] = relationship(back_populates='author')
+
+    def __repr__(self):
+        return f'<User {self.username}>'
+
+
+class Post(db.Model):
+    __tablename__ = 'posts'
+
+    id: Mapped[int] = mapped_column(primary_key=True)
+    body: Mapped[str] = mapped_column(sa.String(280))
+    timestamp: Mapped[datetime] = mapped_column(index=True, default=datetime.now)
+    user_id: Mapped[int] = mapped_column(sa.ForeignKey(User.id), index=True)
+
+    # post.author devolve o User; user_id é preenchido automaticamente
+    author: Mapped[User] = relationship(back_populates='posts')
+
+    def __repr__(self):
+        return f'<Post {self.body}>'
+
+
+# Usada internamente pelo Flask-Login para recuperar o usuário atual
+@login.user_loader
+def load_user(id):
+    return db.session.get(User, int(id))
